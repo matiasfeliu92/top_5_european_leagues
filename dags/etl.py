@@ -5,7 +5,7 @@ import pandas as pd
 import os
 from airflow.models.dag import DAG
 from airflow.operators.python import PythonOperator
-# from helpers.manage_db import ManageDB
+from airflow.operators.bash import BashOperator
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
 
@@ -77,17 +77,30 @@ def load():
         print(df.head())
         print(df.info())
         table_name = "Top5EuropeanLeagues"
-        df.to_sql(table_name, con=engine, schema="raw_data", if_exists="replace", index=True)
+        with engine.connect() as conn:
+            conn.execute(f"TRUNCATE TABLE raw_data.\"Top5EuropeanLeagues\"")
+        df.to_sql(table_name, con=engine, schema="raw_data", if_exists="append", index=True)
 
 with DAG(
     'Top5EuropeanLeagues_ETL',
     default_args=default_args,
-    description='A simple tutorial DAG',
+    description='This process was created, for extract, load and transform data of Top 5 European Leagues',
     schedule_interval=timedelta(days=1),
     start_date=datetime.now(),
-    tags=['example'],
+    tags=['Football'],
 ) as dag:
-    extract_task = PythonOperator(task_id="extract", python_callable=extract)
-    load_task = PythonOperator(task_id="load", python_callable=load)
+    extract_data = PythonOperator(
+        task_id="extract_data", 
+        python_callable=extract
+    )
+    load_data = PythonOperator(
+        task_id="load_data", 
+        python_callable=load
+    )
+    transform_with_DBT = BashOperator(
+        task_id="transform_with_DBT",
+        bash_command="cd /opt/airflow/european_leagues_DBT && dbt run --select stg_football_data int_team_match_performance --profiles-dir /home/airflow/.dbt",
+        dag=dag,
+    )
 
-    extract_task >> load_task
+    extract_data >> load_data >> transform_with_DBT

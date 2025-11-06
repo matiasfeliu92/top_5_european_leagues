@@ -17,6 +17,8 @@ x-airflow-common:
     - ./logs:/opt/airflow/logs
     - ./plugins:/opt/airflow/plugins
     - ./data:/opt/airflow/data
+    - ./.dbt:/home/airflow/.dbt
+    - ./european_leagues_DBT:/opt/airflow/european_leagues_DBT
     - .kaggle/kaggle.json:/home/airflow/.config/kaggle/kaggle.json:ro
   user: "${AIRFLOW_UID}:0"
   depends_on:

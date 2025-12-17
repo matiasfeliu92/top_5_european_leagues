@@ -18,6 +18,7 @@ x-airflow-common:
     - ./plugins:/opt/airflow/plugins
     - ./data:/opt/airflow/data
     - ./.dbt:/home/airflow/.dbt
+    - ./src:/opt/airflow/src
     - ./european_leagues_DBT:/opt/airflow/european_leagues_DBT
     - .kaggle/kaggle.json:/home/airflow/.config/kaggle/kaggle.json:ro
   user: "${AIRFLOW_UID}:0"
@@ -64,6 +65,8 @@ services:
       --lastname User \
       --role Admin \
       --email admin@example.com"
+    env_file:
+      - .env
 
 volumes:
   postgres-db-volume:

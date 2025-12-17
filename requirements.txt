@@ -8,3 +8,7 @@ kaggle
 pymysql
 dbt-core
 dbt-postgres
+lxml
+beautifulsoup4
+selenium
+requests

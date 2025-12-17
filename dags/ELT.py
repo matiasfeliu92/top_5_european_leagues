@@ -22,13 +22,13 @@ default_args = {
 BASE_DIR = os.getcwd()
 
 def extract():
-    print("FIRST STEP --> extract data")
+    print("FIRST STEP --> scrap and save links")
     scrapper = Scrapper()
     scrapper.extract_links()
     scrapper.save_links()
 
 def load():
-    print("NEXT STEP --> transform data")
+    print("NEXT STEP --> extract and load data")
     extract = Extract()
     extract.extract_files()
     

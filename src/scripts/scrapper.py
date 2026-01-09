@@ -55,13 +55,16 @@ class Scrapper:
 
     def save_links(self):
         df_links = pd.DataFrame(self.extracted_links)
-        df_links["year"] = df_links["season"].apply(lambda s: int(s.split()[1].split("/")[0]))
-        df_links_final = df_links[df_links["year"] >= 2020]
-        output_dir = self.settings.create_new_dir(["data", "input"])
-        logging.info(output_dir)
-        df_links_final.to_csv(
-            os.path.join(output_dir, "all_matchs_links.csv"),
-            sep=";",
-            index=False,
-            encoding="utf-8-sig",
-        )
+        if not df_links.empty:
+            df_links["year"] = df_links["season"].apply(lambda s: int(s.split()[1].split("/")[0]))
+            df_links_final = df_links[df_links["year"] >= 2020]
+            output_dir = self.settings.create_new_dir(["data", "input"])
+            logging.info(output_dir)
+            df_links_final.to_csv(
+                os.path.join(output_dir, "all_matchs_links.csv"),
+                sep=";",
+                index=False,
+                encoding="utf-8-sig",
+            )
+        else:
+            logging.warning("THERE ARE NO LINKS TO SAVE")

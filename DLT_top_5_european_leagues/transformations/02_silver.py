@@ -5,6 +5,8 @@ from pyspark.sql.functions import col, md5, concat, coalesce, lit, to_date, expr
     name="football_data_silver",
     comment="Capa Silver: Datos limpios, tipados y con nombres descriptivos."
 )
+@dlt.expect("valid_match_id", "match_id_key IS NOT NULL")
+@dlt.expect_or_drop("positive_goals", "full_time_home_goals >= 0 AND full_time_away_goals >= 0")
 def football_data_silver():
     # Leemos de tu tabla Bronze unificada
     bronze_df = dlt.read("football_data_bronze")
